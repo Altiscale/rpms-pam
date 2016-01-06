@@ -3,7 +3,7 @@
 Summary: An extensible library which provides authentication for applications
 Name: pam
 Version: 1.1.1
-Release: 20%{?dist}
+Release: 21%{?dist}
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License: BSD and GPLv2+
@@ -57,6 +57,7 @@ Patch35: pam-1.1.1-selinux-canonicalize.patch
 Patch36: pam-1.1.1-access-netgroup.patch
 Patch37: pam-1.1.1-userdb-crypt-hash.patch
 Patch38: pam-1.1.1-opasswd-tolerant.patch
+Patch39: pam-1.1.1-loginuid-ignore-failure-namespaces.patch
 
 %define _sbindir /sbin
 %define _moduledir /%{_lib}/security
@@ -154,6 +155,7 @@ mv pam-redhat-%{pam_redhat_version}/* modules
 %patch36 -p1 -b .netgroup
 %patch37 -p1 -b .crypt-hash
 %patch38 -p1 -b .opasswd-tolerant
+%patch39 -p1
 
 libtoolize -f
 autoreconf
