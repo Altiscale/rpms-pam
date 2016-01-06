@@ -57,7 +57,7 @@ Patch35: pam-1.1.1-selinux-canonicalize.patch
 Patch36: pam-1.1.1-access-netgroup.patch
 Patch37: pam-1.1.1-userdb-crypt-hash.patch
 Patch38: pam-1.1.1-opasswd-tolerant.patch
-Patch39: pam-1.1.1-loginuid-ignore-failure-namespaces.patch
+Patch39: pam-1.1.1-loginuid-container.patch
 Patch40: pam-1.1.1-cve-2015-3238.patch
 
 %define _sbindir /sbin
@@ -156,7 +156,7 @@ mv pam-redhat-%{pam_redhat_version}/* modules
 %patch36 -p1 -b .netgroup
 %patch37 -p1 -b .crypt-hash
 %patch38 -p1 -b .opasswd-tolerant
-%patch39 -p1 -b .loginuid-ignore-failure-namespaces
+%patch39 -p1 -b .loginuid-container
 %patch40 -p1 -b .password-limit
 
 libtoolize -f
