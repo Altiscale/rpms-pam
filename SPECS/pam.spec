@@ -3,7 +3,7 @@
 Summary: An extensible library which provides authentication for applications
 Name: pam
 Version: 1.1.8
-Release: 22%{?dist}
+Release: 23%{?dist}
 # The library is BSD licensed with option to relicense as GPLv2+
 # - this option is redundant as the BSD license allows that anyway.
 # pam_timestamp, pam_loginuid, and pam_console modules are GPLv2+.
@@ -69,6 +69,10 @@ Patch54: pam-1.1.8-man-space.patch
 Patch55: pam-1.1.8-tty-audit-uid-range.patch
 Patch56: pam-1.1.8-faillock-admin-group.patch
 Patch57: pam-1.1.8-mkhomedir-inroot.patch
+Patch58: pam-1.1.8-authtok-verified.patch
+Patch59: pam-1.1.8-man-fixes.patch
+Patch60: pam-1.1.8-unix-max-fd-no.patch
+Patch61: pam-1.1.8-loginuid-containers.patch
 
 %define _pamlibdir %{_libdir}
 %define _moduledir %{_libdir}/security
@@ -171,6 +175,10 @@ mv pam-redhat-%{pam_redhat_version}/* modules
 %patch55 -p1 -b .uid-range
 %patch56 -p1 -b .admin-group
 %patch57 -p1 -b .mkhomedir-inroot
+%patch58 -p1 -b .authtok-verified
+%patch59 -p1 -b .manfix
+%patch60 -p1 -b .max-fd-no
+%patch61 -p1 -b .containers
 
 %build
 autoreconf -i
@@ -419,6 +427,13 @@ fi
 %doc doc/adg/*.txt doc/adg/html
 
 %changelog
+* Tue Aug  6 2019 Tomáš Mráz <tmraz@redhat.com> 1.1.8-23
+- pam_get_authtok_verify: ensure no double verification happens
+- manual page fixes for pam_tty_audit and pam_wheel
+- pam_unix: lower the excessive maximum number of closed fd descriptors
+  when spawning handlers
+- pam_loginuid: do not prevent login in unprivileged containers
+
 * Fri Nov  3 2017 Tomáš Mráz <tmraz@redhat.com> 1.1.8-22
 - pam_mkhomedir: do not fail creating parent dir if in /
 
