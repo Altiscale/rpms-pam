@@ -3,7 +3,7 @@
 Summary: An extensible library which provides authentication for applications
 Name: pam
 Version: 1.3.1
-Release: 4%{?dist}
+Release: 8%{?dist}
 # The library is BSD licensed with option to relicense as GPLv2+
 # - this option is redundant as the BSD license allows that anyway.
 # pam_timestamp, pam_loginuid, and pam_console modules are GPLv2+.
@@ -44,6 +44,15 @@ Patch32: pam-1.2.1-console-devname.patch
 Patch33: pam-1.3.0-unix-nomsg.patch
 Patch34: pam-1.3.1-coverity.patch
 Patch35: pam-1.3.1-console-build.patch
+Patch36: pam-1.3.1-faillock-update.patch
+Patch37: pam-1.3.1-namespace-mntopts.patch
+Patch38: pam-1.3.1-lastlog-no-showfailed.patch
+Patch39: pam-1.3.1-lastlog-unlimited-fsize.patch
+Patch40: pam-1.3.1-unix-improve-logging.patch
+Patch41: pam-1.3.1-tty-audit-manfix.patch
+Patch42: pam-1.3.1-fds-closing.patch
+Patch43: pam-1.3.1-authtok-verify-fix.patch
+Patch44: pam-1.3.1-motd-manpage.patch
 
 %define _pamlibdir %{_libdir}
 %define _moduledir %{_libdir}/security
@@ -127,6 +136,15 @@ cp %{SOURCE18} .
 %patch33 -p1 -b .nomsg
 %patch34 -p1 -b .coverity
 %patch35 -p1 -b .console-build
+%patch36 -p1 -b .faillock-update
+%patch37 -p1 -b .mntopts
+%patch38 -p1 -b .no-showfailed
+%patch39 -p1 -b .unlimited-fsize
+%patch40 -p1 -b .improve-logging
+%patch41 -p1 -b .tty-audit-manfix
+%patch42 -p1 -b .fds-closing
+%patch43 -p1 -b .authtok-verify-fix
+%patch44 -p1 -b .motd-manpage
 autoreconf -i
 
 %build
@@ -152,6 +170,9 @@ for readme in modules/pam_*/README ; do
 	cp -f ${readme} doc/txts/README.`dirname ${readme} | sed -e 's|^modules/||'`
 done
 
+rm -rf doc/txts/README.pam_tally*
+rm -rf doc/sag/html/*pam_tally*
+
 # Install the binaries, libraries, and modules.
 make install DESTDIR=$RPM_BUILD_ROOT LDCONFIG=:
 
@@ -176,7 +197,6 @@ install -m 644 %{SOURCE10} $RPM_BUILD_ROOT%{_pamconfdir}/config-util
 install -m 644 %{SOURCE16} $RPM_BUILD_ROOT%{_pamconfdir}/postlogin
 install -m 600 /dev/null $RPM_BUILD_ROOT%{_secconfdir}/opasswd
 install -d -m 755 $RPM_BUILD_ROOT/var/log
-install -m 600 /dev/null $RPM_BUILD_ROOT/var/log/tallylog
 install -d -m 755 $RPM_BUILD_ROOT/var/run/faillock
 
 # Install man pages.
@@ -336,6 +356,7 @@ done
 %config(noreplace) %{_secconfdir}/chroot.conf
 %config %{_secconfdir}/console.perms
 %config(noreplace) %{_secconfdir}/console.handlers
+%config(noreplace) %{_secconfdir}/faillock.conf
 %config(noreplace) %{_secconfdir}/group.conf
 %config(noreplace) %{_secconfdir}/limits.conf
 %dir %{_secconfdir}/limits.d
@@ -352,7 +373,6 @@ done
 %config(noreplace) %{_secconfdir}/sepermit.conf
 %dir /var/run/sepermit
 %endif
-%ghost %verify(not md5 size mtime) /var/log/tallylog
 %dir /var/run/faillock
 %{_prefix}/lib/tmpfiles.d/pam.conf
 %{_mandir}/man5/*
@@ -369,6 +389,24 @@ done
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Thu Dec 19 2019 Tomáš Mráz <tmraz@redhat.com> 1.3.1-8
+- pam_motd: Document how to properly silence unwanted motd messages
+
+* Mon Dec 16 2019 Tomáš Mráz <tmraz@redhat.com> 1.3.1-6
+- pam_faillock: Fix regression in admin_group support
+
+* Wed Oct 16 2019 Tomáš Mráz <tmraz@redhat.com> 1.3.1-5
+- pam_faillock: Support configuration file /etc/security/faillock.conf
+- pam_faillock: Support local_users_only option
+- pam_namespace: Support noexec, nosuid and nodev flags for tmpfs mounts
+- Drop tallylog and pam_tally[2] documentation
+- pam_lastlog: Do not display failed attempts with PAM_SILENT flag
+- pam_lastlog: Support unlimited option to override fsize limit
+- pam_unix: Log if user authenticated without password
+- pam_tty_audit: Improve manual page
+- Optimize closing fds when spawning helpers
+- Fix duplicate password verification in pam_authtok_verify()
+
 * Fri Dec  7 2018 Tomáš Mráz <tmraz@redhat.com> 1.3.1-4
 - Drop pam_tally2 which was obsoleted and deprecated long time ago
 
