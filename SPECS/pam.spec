@@ -3,7 +3,7 @@
 Summary: An extensible library which provides authentication for applications
 Name: pam
 Version: 1.3.1
-Release: 8%{?dist}
+Release: 10%{?dist}
 # The library is BSD licensed with option to relicense as GPLv2+
 # - this option is redundant as the BSD license allows that anyway.
 # pam_timestamp, pam_loginuid, and pam_console modules are GPLv2+.
@@ -53,6 +53,12 @@ Patch41: pam-1.3.1-tty-audit-manfix.patch
 Patch42: pam-1.3.1-fds-closing.patch
 Patch43: pam-1.3.1-authtok-verify-fix.patch
 Patch44: pam-1.3.1-motd-manpage.patch
+# Upstreamed
+Patch45: pam-1.3.1-pam-usertype.patch
+# Upstreamed
+Patch46: pam-1.3.1-audit-error.patch
+# Upstreamed
+Patch47: pam-1.3.1-pam-modutil-close-write.patch
 
 %define _pamlibdir %{_libdir}
 %define _moduledir %{_libdir}/security
@@ -145,6 +151,9 @@ cp %{SOURCE18} .
 %patch42 -p1 -b .fds-closing
 %patch43 -p1 -b .authtok-verify-fix
 %patch44 -p1 -b .motd-manpage
+%patch45 -p1 -b .pam-usertype
+%patch46 -p1 -b .audit-error
+%patch47 -p1 -b .pam-modutil-close-write
 autoreconf -i
 
 %build
@@ -347,6 +356,7 @@ done
 %{_moduledir}/pam_unix_passwd.so
 %{_moduledir}/pam_unix_session.so
 %{_moduledir}/pam_userdb.so
+%{_moduledir}/pam_usertype.so
 %{_moduledir}/pam_warn.so
 %{_moduledir}/pam_wheel.so
 %{_moduledir}/pam_xauth.so
@@ -389,6 +399,13 @@ done
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Tue Apr 21 2020 Iker Pedrosa <ipedrosa@redhat.com> 1.3.1-10
+- pam_modutil_sanitize_helper_fds: fix SIGPIPE effect of PAM_MODUTIL_PIPE_FD (#1791970)
+
+* Fri Apr 17 2020 Iker Pedrosa <ipedrosa@redhat.com> 1.3.1-9
+- pam_usertype: new module to tell if uid is in login.defs ranges (#1810474)
+- pam_tty_audit: if kernel audit is disabled return PAM_IGNORE (#1775357)
+
 * Thu Dec 19 2019 Tomáš Mráz <tmraz@redhat.com> 1.3.1-8
 - pam_motd: Document how to properly silence unwanted motd messages
 
