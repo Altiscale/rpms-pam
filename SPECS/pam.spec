@@ -3,7 +3,7 @@
 Summary: An extensible library which provides authentication for applications
 Name: pam
 Version: 1.3.1
-Release: 14%{?dist}
+Release: 15%{?dist}
 # The library is BSD licensed with option to relicense as GPLv2+
 # - this option is redundant as the BSD license allows that anyway.
 # pam_timestamp, pam_loginuid, and pam_console modules are GPLv2+.
@@ -65,6 +65,8 @@ Patch47: pam-1.3.1-pam-modutil-close-write.patch
 Patch48: pam-1.3.1-wheel-pam_ruser-fallback.patch
 # https://github.com/linux-pam/linux-pam/commit/491e5500b6b3913f531574208274358a2df88659
 Patch49: pam-1.3.1-namespace-gdm-doc.patch
+# https://github.com/linux-pam/linux-pam/commit/a7453aeeb398d6cbb7a709c4e2a1d75905220fff
+Patch50: pam-1.3.1-pam-userdb-prevent-garbage-characters-from-db.patch
 
 %define _pamlibdir %{_libdir}
 %define _moduledir %{_libdir}/security
@@ -162,6 +164,7 @@ cp %{SOURCE18} .
 %patch47 -p1 -b .pam-modutil-close-write
 %patch48 -p1 -b .wheel-pam_ruser-fallback
 %patch49 -p1 -b .namespace-gdm-doc
+%patch50 -p1 -b .pam-userdb-prevent-garbage-characters-from-db
 autoreconf -i
 
 %build
@@ -407,6 +410,9 @@ done
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Mon May  3 2021 Iker Pedrosa <ipedrosa@redhat.com> 1.3.1-15
+- pam_userdb: Prevent garbage characters from db (#1791965)
+
 * Thu Nov  5 2020 Iker Pedrosa <ipedrosa@redhat.com> 1.3.1-14
 - Revert 1.3.1-12
 
