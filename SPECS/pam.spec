@@ -3,7 +3,7 @@
 Summary: An extensible library which provides authentication for applications
 Name: pam
 Version: 1.3.1
-Release: 11%{?dist}
+Release: 14%{?dist}
 # The library is BSD licensed with option to relicense as GPLv2+
 # - this option is redundant as the BSD license allows that anyway.
 # pam_timestamp, pam_loginuid, and pam_console modules are GPLv2+.
@@ -59,6 +59,12 @@ Patch45: pam-1.3.1-pam-usertype.patch
 Patch46: pam-1.3.1-audit-error.patch
 # Upstreamed
 Patch47: pam-1.3.1-pam-modutil-close-write.patch
+# https://github.com/linux-pam/linux-pam/commit/6bf9b454eb971083f0cce49faa2aa1cde329ff5d
+# https://github.com/linux-pam/linux-pam/commit/9091ea1d81e85f49a221b0325d27b22ce69e444a
+# https://github.com/linux-pam/linux-pam/commit/a3a5cbf86083c43026b558e2023f597530626267
+Patch48: pam-1.3.1-wheel-pam_ruser-fallback.patch
+# https://github.com/linux-pam/linux-pam/commit/491e5500b6b3913f531574208274358a2df88659
+Patch49: pam-1.3.1-namespace-gdm-doc.patch
 
 %define _pamlibdir %{_libdir}
 %define _moduledir %{_libdir}/security
@@ -154,6 +160,8 @@ cp %{SOURCE18} .
 %patch45 -p1 -b .pam-usertype
 %patch46 -p1 -b .audit-error
 %patch47 -p1 -b .pam-modutil-close-write
+%patch48 -p1 -b .wheel-pam_ruser-fallback
+%patch49 -p1 -b .namespace-gdm-doc
 autoreconf -i
 
 %build
@@ -399,6 +407,17 @@ done
 %doc doc/specs/rfc86.0.txt
 
 %changelog
+* Thu Nov  5 2020 Iker Pedrosa <ipedrosa@redhat.com> 1.3.1-14
+- Revert 1.3.1-12
+
+* Fri Oct 30 2020 Iker Pedrosa <ipedrosa@redhat.com> 1.3.1-13
+- pam_wheel: if getlogin fails fallback to PAM_RUSER: fixed malformed patch (#1866866)
+- pam_namespace: polyinstantiation refer to gdm doc (#1861841)
+
+* Thu Jul 16 2020 Peter Robinson <pbrobinson@redhat.com> - 1.3.1-12
+- Add the motd.d directories (empty) to silence warnings and to
+  provide proper ownership for them (#1847501)
+
 * Fri May 15 2020 Iker Pedrosa <ipedrosa@redhat.com> 1.3.1-11
 - pam_usertype: fixed malformed patch
 
